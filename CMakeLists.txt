@@ -1,5 +1,5 @@
 # =============================================================================
-# {{PROJECT_NAME}}
+# Application
 # =============================================================================
 # {{PROJECT_DESCRIPTION}}
 #
@@ -10,7 +10,7 @@
 cmake_minimum_required(VERSION 3.28)
 
 # Project definition with version and metadata
-project({{PROJECT_NAME}}
+project(Application
     VERSION 0.1.0
     DESCRIPTION "{{PROJECT_DESCRIPTION}}"
     LANGUAGES CXX  # Change to C for C projects
@@ -41,13 +41,6 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 # =============================================================================
-# Project Options
-# =============================================================================
-
-option({{PROJECT_PREFIX}}_BUILD_TESTS "Build unit tests" ON)
-option({{PROJECT_PREFIX}}_BUILD_EXAMPLES "Build example programs" ON)
-
-# =============================================================================
 # Compiler Configuration
 # =============================================================================
 
@@ -56,9 +49,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set output directories for better organization
 string(TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE_LOWER)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/${BUILD_TYPE_LOWER}/bin")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/${BUILD_TYPE_LOWER}/lib")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/${BUILD_TYPE_LOWER}/lib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/out/${BUILD_TYPE_LOWER}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/out/${BUILD_TYPE_LOWER}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/out/${BUILD_TYPE_LOWER}/lib")
 
 # =============================================================================
 # Formatting Target (clang-format)
@@ -67,7 +60,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/${BUILD_TYPE_LOWER}/lib"
 find_program(CLANG_FORMAT NAMES clang-format)
 if(CLANG_FORMAT)
     # Collect all source files for formatting
-    file(GLOB_RECURSE ALL_SOURCE_FILES 
+    file(GLOB_RECURSE ALL_SOURCE_FILES
         ${CMAKE_SOURCE_DIR}/application/*.cpp
         ${CMAKE_SOURCE_DIR}/application/*.h
         ${CMAKE_SOURCE_DIR}/src/*.cpp
@@ -82,7 +75,7 @@ if(CLANG_FORMAT)
         ${CMAKE_SOURCE_DIR}/examples/*.cc
         ${CMAKE_SOURCE_DIR}/examples/*.c
     )
-    
+
     add_custom_target(format
         COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
@@ -114,43 +107,6 @@ add_subdirectory(library)
 
 add_subdirectory(application)
 
-# Add Windows resource file for icon on Windows
-if(WIN32)
-    set(WINDOWS_RESOURCES ${CMAKE_SOURCE_DIR}/resources.rc)
-else()
-    set(WINDOWS_RESOURCES "")
-endif()
-
-add_executable({{PROJECT_NAME}}
-    ${CMAKE_SOURCE_DIR}/main.cpp
-    ${WINDOWS_RESOURCES}
-)
-
-target_include_directories({{PROJECT_NAME}}
-    PRIVATE
-        ${CMAKE_SOURCE_DIR}/application
-        ${CMAKE_SOURCE_DIR}/library/include
-)
-
-target_link_libraries({{PROJECT_NAME}} 
-    PRIVATE 
-        {{APPLICATION_LIB}}
-)
-
-# Copy assets folder to output directory after build
-add_custom_command(TARGET {{PROJECT_NAME}} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/assets
-    $<TARGET_FILE_DIR:{{PROJECT_NAME}}>/assets
-    COMMENT "Copying assets to output directory"
-)
-
-# =============================================================================
-# Examples
-# =============================================================================
-
-add_subdirectory(examples)
-
 # =============================================================================
 # Testing
 # =============================================================================
@@ -158,30 +114,30 @@ add_subdirectory(examples)
 add_subdirectory(tests)
 
 # =============================================================================
-# Copy compile_commands.json to source dir (for clangd)
+# Post-Build Commands
 # =============================================================================
 
-add_custom_target(copy_compile_commands ALL
+add_custom_target(copy_compile_commands
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${CMAKE_BINARY_DIR}/compile_commands.json
-            ${CMAKE_SOURCE_DIR}/compile_commands.json
-    COMMENT "Copying compile_commands.json to source dir for clangd"
-    DEPENDS ${CMAKE_BINARY_DIR}/compile_commands.json
+        "${CMAKE_BINARY_DIR}/compile_commands.json"
+        "${CMAKE_SOURCE_DIR}/compile_commands.json"
+    COMMENT "Copying compile_commands.json to project root"
+    VERBATIM
 )
+
+add_dependencies(Application copy_compile_commands)
 
 # =============================================================================
 # Project Summary
 # =============================================================================
 
 message(STATUS "")
-message(STATUS "=== {{PROJECT_NAME}} Configuration ===")
+message(STATUS "=== Application Configuration ===")
 message(STATUS "Project:              ${PROJECT_NAME}")
 message(STATUS "Version:              ${PROJECT_VERSION}")
 message(STATUS "Build type:           ${CMAKE_BUILD_TYPE}")
 message(STATUS "C++ standard:         ${CMAKE_CXX_STANDARD}")
 message(STATUS "Compiler:             ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
-message(STATUS "Build tests:          ${{{PROJECT_PREFIX}}_BUILD_TESTS}")
-message(STATUS "Build examples:       ${{{PROJECT_PREFIX}}_BUILD_EXAMPLES}")
 message(STATUS "=========================================")
 message(STATUS "")
 

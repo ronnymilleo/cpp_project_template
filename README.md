@@ -1,4 +1,4 @@
-# {{PROJECT_NAME}}
+# Application
 
 {{PROJECT_DESCRIPTION}}
 
@@ -21,7 +21,7 @@ Brief description of what this project does and its main features.
 ## Project Structure
 
 ```
-{{PROJECT_NAME}}/
+Project Root/
 ├── CMakeLists.txt      # Main CMake configuration
 ├── CMakePresets.json   # CMake presets for easy building
 ├── README.md           # This file
@@ -37,9 +37,6 @@ Brief description of what this project does and its main features.
 ├── tests/              # Unit tests
 │   ├── CMakeLists.txt
 │   └── test_main.cpp
-├── examples/           # Example programs
-│   ├── CMakeLists.txt
-│   └── example.cpp
 ├── docs/               # Documentation
 ├── assets/             # Resource files
 ├── scripts/            # Utility scripts
@@ -57,13 +54,7 @@ Brief description of what this project does and its main features.
 
 ## License
 
-Copyright (c) 2025 Ronny Milleo
-
 [Add license details here]
-
-## Author
-
-**Ronny Milleo**
 
 ## Acknowledgments
 
