@@ -2,17 +2,16 @@
 # Application
 # =============================================================================
 
-add_executable(Application
+add_executable(${PROJECT_NAME}_App
     main.cpp
 )
 
-target_include_directories(Application
+target_include_directories(${PROJECT_NAME}_App
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/application
-        ${CMAKE_SOURCE_DIR}/library
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(Application
+target_link_libraries(${PROJECT_NAME}_App
     PRIVATE
-        Library
+        ${PROJECT_NAME}::Library
 )

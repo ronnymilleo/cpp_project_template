@@ -49,9 +49,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set output directories for better organization
 string(TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE_LOWER)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/out/${BUILD_TYPE_LOWER}/bin")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/out/${BUILD_TYPE_LOWER}/lib")
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/out/${BUILD_TYPE_LOWER}/lib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/out/${BUILD_TYPE_LOWER}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/out/${BUILD_TYPE_LOWER}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/out/${BUILD_TYPE_LOWER}/lib")
 
 # =============================================================================
 # Formatting Target (clang-format)
@@ -61,24 +61,24 @@ find_program(CLANG_FORMAT NAMES clang-format)
 if(CLANG_FORMAT)
     # Collect all source files for formatting
     file(GLOB_RECURSE ALL_SOURCE_FILES
-        ${CMAKE_SOURCE_DIR}/application/*.cpp
-        ${CMAKE_SOURCE_DIR}/application/*.h
-        ${CMAKE_SOURCE_DIR}/src/*.cpp
-        ${CMAKE_SOURCE_DIR}/src/*.cc
-        ${CMAKE_SOURCE_DIR}/src/*.c
-        ${CMAKE_SOURCE_DIR}/include/*.h
-        ${CMAKE_SOURCE_DIR}/include/*.hpp
-        ${CMAKE_SOURCE_DIR}/tests/*.cpp
-        ${CMAKE_SOURCE_DIR}/tests/*.cc
-        ${CMAKE_SOURCE_DIR}/tests/*.c
-        ${CMAKE_SOURCE_DIR}/examples/*.cpp
-        ${CMAKE_SOURCE_DIR}/examples/*.cc
-        ${CMAKE_SOURCE_DIR}/examples/*.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/application/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/application/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/examples/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/examples/*.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/examples/*.c
     )
 
     add_custom_target(format
         COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Formatting source code with clang-format"
         VERBATIM
     )
@@ -111,7 +111,11 @@ add_subdirectory(application)
 # Testing
 # =============================================================================
 
-add_subdirectory(tests)
+option(${PROJECT_NAME}_BUILD_TESTS "Build tests" OFF)
+if(${PROJECT_NAME}_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
 
 # =============================================================================
 # Post-Build Commands
@@ -119,13 +123,13 @@ add_subdirectory(tests)
 
 add_custom_target(copy_compile_commands
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_BINARY_DIR}/compile_commands.json"
-        "${CMAKE_SOURCE_DIR}/compile_commands.json"
+        "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json"
+        "${CMAKE_CURRENT_SOURCE_DIR}/compile_commands.json"
     COMMENT "Copying compile_commands.json to project root"
     VERBATIM
 )
 
-add_dependencies(Application copy_compile_commands)
+add_dependencies(${PROJECT_NAME}_App copy_compile_commands)
 
 # =============================================================================
 # Project Summary

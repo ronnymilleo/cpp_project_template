@@ -40,7 +40,7 @@
       "binaryDir": "${sourceDir}/build/debug-tests",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "{{PROJECT_PREFIX}}_BUILD_TESTS": "ON"
+        "{{PROJECT_NAME}}_BUILD_TESTS": "ON"
       }
     },
     {
@@ -50,7 +50,7 @@
       "binaryDir": "${sourceDir}/build/release-tests",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "{{PROJECT_PREFIX}}_BUILD_TESTS": "ON"
+        "{{PROJECT_NAME}}_BUILD_TESTS": "ON"
       }
     }
   ],
